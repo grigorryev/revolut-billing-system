@@ -8,4 +8,10 @@ enum class AccountType {
     fun toDto(): AccountTypeDto = when (this) {
         MAIN_USER_ACCOUNT -> AccountTypeDto.MAIN_USER_ACCOUNT
     }
+
+    companion object {
+        fun fromDto(dto: AccountTypeDto) = when (dto) {
+            AccountTypeDto.MAIN_USER_ACCOUNT -> MAIN_USER_ACCOUNT
+        }
+    }
 }

@@ -11,7 +11,7 @@ val apiDtoMapper = jacksonObjectMapper()
     .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
     .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
 
-inline fun <reified ReqT, ResT> controllerMethod(crossinline method: (ReqT) -> ResT): (Request, Response) -> String {
+inline fun <reified ReqT, ResT> postMethod(crossinline method: (ReqT) -> ResT): (Request, Response) -> String {
     return { req: Request, res: Response ->
         val deserializedRequest = apiDtoMapper.readValue<ReqT>(req.body())
         val response = method(deserializedRequest)
