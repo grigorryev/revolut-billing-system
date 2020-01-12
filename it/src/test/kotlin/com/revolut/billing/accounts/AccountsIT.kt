@@ -1,6 +1,7 @@
 package com.revolut.billing.accounts
 
-import com.revolut.billing.api.v1.CreateAccountRequest
+import com.revolut.billing.api.v1.dto.accounts.AccountType
+import com.revolut.billing.api.v1.dto.accounts.CreateAccountRequest
 import org.amshove.kluent.shouldEqual
 import org.junit.Test
 
@@ -8,12 +9,16 @@ import org.junit.Test
 class AccountsIT : BaseIT() {
 
     @Test
-    fun `adds account`() {
+    fun `creates new account`() {
         val request = CreateAccountRequest(
-            details = "9999",
+            type = AccountType.MAIN_USER_ACCOUNT,
+            subjectId = "9999",
             currency = "USD"
         )
+
         val response = billingAccountsClient.createAccount(request)
-        response.accountId shouldEqual "111"
+
+        val account = billingAccountsClient.getAccount(AccountType.MAIN_USER_ACCOUNT, "9999", "USD")
+        account.subjectId shouldEqual "9999"
     }
 }

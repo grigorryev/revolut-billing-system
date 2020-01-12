@@ -1,10 +1,8 @@
 package com.revolut.billing.accounts
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.google.inject.Guice
-import com.revolut.billing.BillingApplication
-import com.revolut.billing.MainModule
-import com.revolut.billing.api.v1.BillingAccountApi
+import com.revolut.billing.api.v1.client.AccountsClient
+import com.revolut.billing.startApplication
 import feign.Feign
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
@@ -20,9 +18,8 @@ open class BaseIT {
     fun startServer() {
         if (isInitilized) return
 
-        Guice.createInjector(MainModule())
-            .getInstance(BillingApplication::class.java)
-            .run()
+        startApplication("../backend/src/main/resources/db/migration")
+
         isInitilized = true
     }
 
@@ -31,5 +28,5 @@ open class BaseIT {
     val billingAccountsClient = Feign.builder()
         .encoder(JacksonEncoder(objectMapper))
         .decoder(JacksonDecoder(objectMapper))
-        .target(BillingAccountApi::class.java, "http://localhost:8080")
+        .target(AccountsClient::class.java, "http://localhost:8080")
 }

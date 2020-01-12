@@ -7,7 +7,7 @@ import com.google.inject.multibindings.Multibinder
 class V1ControllersModule : AbstractModule() {
     override fun configure() {
         Multibinder.newSetBinder(binder(), SparkController::class.java).also {
-            it.addBinding().to(AccountController::class.java)
+            it.addBinding().to(AccountsController::class.java)
         }
     }
 }

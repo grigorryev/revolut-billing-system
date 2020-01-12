@@ -1,6 +1,6 @@
-package com.revolut.billing.api.v1.dto.accounts
+package com.revolut.billing.domain
 
-data class CreateAccountRequest(
+class AccountId(
     val type: AccountType,
     val subjectId: String,
     val currency: String
