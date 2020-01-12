@@ -8,6 +8,7 @@ class ControllersModule : AbstractModule() {
     override fun configure() {
         Multibinder.newSetBinder(binder(), SparkController::class.java).also {
             it.addBinding().to(AccountsController::class.java)
+            it.addBinding().to(OperationController::class.java)
         }
     }
 }

@@ -40,24 +40,3 @@ fun startApplication(migrationsPath: String) {
 fun main() {
     startApplication("backend/src/main/resources/db/migration")
 }
-
-
-class MemoryDatabase {
-
-    private val dslContext: DSLContext
-
-    init {
-        val pool = JDBCPool()
-        pool.setUrl(DEFAULT_URL)
-
-        dslContext = DSL.using(pool, SQLDialect.HSQLDB)
-    }
-
-    fun ctx(): DSLContext {
-        return dslContext
-    }
-
-    companion object {
-        private val DEFAULT_URL = "jdbc:hsqldb:mem:billing"
-    }
-}

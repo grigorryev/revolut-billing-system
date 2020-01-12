@@ -17,6 +17,20 @@ class Account(
         amount = this.amount
     )
 
+    fun canBeNegative(): Boolean = this.accountId.type.canBeNegative()
+
+    fun decreasedBy(delta: BigDecimal) = Account(
+        id = this.id,
+        accountId = this.accountId,
+        amount = this.amount.minus(delta)
+    )
+
+    fun increasedBy(delta: BigDecimal) = Account(
+        id = this.id,
+        accountId = this.accountId,
+        amount = this.amount.minus(delta)
+    )
+
     companion object {
         fun fromDbRecord(record: Record) = Account(
             id = record.getValue(ACCOUNT.ID),

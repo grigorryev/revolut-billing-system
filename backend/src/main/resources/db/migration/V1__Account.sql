@@ -11,5 +11,3 @@ CREATE TABLE account (
 
   CONSTRAINT account_pkey PRIMARY KEY (id)
 );
-
-INSERT INTO account (subject_id, account_type, amount, currency) VALUES ('1111', 'MAIN_USER_ACCOUNT', 0, 'USD');

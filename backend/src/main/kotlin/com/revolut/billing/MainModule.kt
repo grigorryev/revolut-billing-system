@@ -8,5 +8,6 @@ class MainModule : AbstractModule() {
     override fun configure() {
         install(ControllersModule())
         install(ServiceModule())
+        bind(DbClient::class.java)
     }
 }
