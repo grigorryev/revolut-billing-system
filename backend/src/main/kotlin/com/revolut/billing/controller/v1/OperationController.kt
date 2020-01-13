@@ -22,6 +22,7 @@ class OperationController @Inject constructor(
     }
 
     private fun deposit(depositRequest: DepositRequest): OperationResponse {
+        RequestValidator.validate(depositRequest)
         return operationService.deposit(depositRequest)
     }
 

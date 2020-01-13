@@ -11,9 +11,7 @@ class Account(
     val amount: BigDecimal
 ) {
     fun toDto() = AccountDto(
-        type = this.accountId.type.toDto(),
-        subjectId = this.accountId.subjectId,
-        currency = this.accountId.currency,
+        accountId = this.accountId.toDto(),
         amount = this.amount
     )
 

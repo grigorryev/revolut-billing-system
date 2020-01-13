@@ -7,6 +7,7 @@ import com.revolut.billing.DbClient
 import com.revolut.billing.api.v1.dto.transfer.DepositRequest
 import com.revolut.billing.api.v1.dto.transfer.OperationResponse
 import com.revolut.billing.domain.Transaction
+import com.revolut.billing.exception.OperationAlreadyProcessedException
 import com.revolut.billing.repository.TransactionRepository
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
@@ -37,7 +38,7 @@ class OperationService @Inject constructor(
 //    }
 
     private fun process(operationId: UUID, transactions: List<Transaction>) {
-        // checkIfAlreadyProcessed(operationId)
+        throwIfAlreadyProcessed(operationId)
 
         val accountsToLock = transactions.flatMap { listOf(it.accountIdFrom, it.accountIdTo) }
             .sorted()
@@ -47,8 +48,8 @@ class OperationService @Inject constructor(
                 accountLocks.get(account).lock()
             }
 
+            throwIfAlreadyProcessed(operationId)
             performTransactions(transactions)
-            // checkIfAlreadyProcessed(operationId)
 
 
         } finally {
@@ -78,5 +79,10 @@ class OperationService @Inject constructor(
 
         accountService.updateAccount(from.decreasedBy(tx.amount), dbTransactionContext)
         accountService.updateAccount(to.increasedBy(tx.amount), dbTransactionContext)
+    }
+
+    private fun throwIfAlreadyProcessed(operationId: UUID) {
+        val transactions = transactionRepository.findByOperationId(operationId, db.ctx())
+        if (transactions.isNotEmpty()) throw OperationAlreadyProcessedException(operationId)
     }
 }

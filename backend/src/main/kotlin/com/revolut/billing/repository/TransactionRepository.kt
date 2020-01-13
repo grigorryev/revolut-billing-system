@@ -5,6 +5,7 @@ import com.revolut.billing.domain.AccountId
 import com.revolut.billing.domain.Transaction
 import db.tables.Transaction.TRANSACTION
 import org.jooq.DSLContext
+import java.util.UUID
 
 @Singleton
 class TransactionRepository {
@@ -24,8 +25,8 @@ class TransactionRepository {
                     CURRENCY
                 )
                 .values(
-                    tx.operationType.toString(),
                     tx.operationId.toString(),
+                    tx.operationType.toString(),
                     tx.accountIdFrom.subjectId,
                     tx.accountIdFrom.type.toString(),
                     tx.accountIdTo.subjectId,
@@ -42,6 +43,13 @@ class TransactionRepository {
         return ctx.selectFrom(TRANSACTION)
             .where(TRANSACTION.TO_SUBJECT_ID.eq(accountId.subjectId))
             .or(TRANSACTION.FROM_SUBJECT_ID.eq(accountId.subjectId))
+            .fetch()
+            .map { Transaction.fromDbRecord(it) }
+    }
+
+    fun findByOperationId(operationId: UUID, ctx: DSLContext): List<Transaction> {
+        return ctx.selectFrom(TRANSACTION)
+            .where(TRANSACTION.OPERATION_ID.eq(operationId.toString()))
             .fetch()
             .map { Transaction.fromDbRecord(it) }
     }

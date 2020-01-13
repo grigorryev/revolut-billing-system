@@ -2,7 +2,7 @@ CREATE SEQUENCE transaction_seq;
 
 CREATE TABLE transaction (
   id                    BIGINT            NOT NULL DEFAULT NEXTVAL('transaction_seq'),
-  operation_id          VARCHAR(30)       NOT NULL,
+  operation_id          VARCHAR(40)       NOT NULL,
   operation_type        VARCHAR(30)       NOT NULL,
 
   from_subject_id       VARCHAR(100)      NOT NULL,

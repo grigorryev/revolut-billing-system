@@ -4,6 +4,7 @@ import db.tables.Transaction.TRANSACTION
 import org.jooq.Record
 import java.math.BigDecimal
 import java.util.UUID
+import com.revolut.billing.api.v1.dto.transaction.Transaction as TransactionDto
 
 class Transaction(
     val id: Long = 0,
@@ -13,6 +14,15 @@ class Transaction(
     val accountIdTo: AccountId,
     val amount: BigDecimal
 ) {
+    fun toDto() = TransactionDto(
+        id = this.id,
+        operationId = this.operationId,
+        operationType = this.operationType.toDto(),
+        accountIdFrom = this.accountIdFrom.toDto(),
+        accountIdTo = this.accountIdTo.toDto(),
+        amount = this.amount
+    )
+
     companion object {
         fun fromDbRecord(record: Record) = Transaction(
             id = record.getValue(TRANSACTION.ID),

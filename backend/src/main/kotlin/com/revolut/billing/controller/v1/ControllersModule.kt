@@ -9,6 +9,7 @@ class ControllersModule : AbstractModule() {
         Multibinder.newSetBinder(binder(), SparkController::class.java).also {
             it.addBinding().to(AccountsController::class.java)
             it.addBinding().to(OperationController::class.java)
+            it.addBinding().to(TransactionsController::class.java)
         }
     }
 }
