@@ -8,7 +8,7 @@ import com.revolut.billing.api.v1.dto.accounts.CreateAccountRequest
 import com.revolut.billing.domain.AccountId
 import com.revolut.billing.domain.AccountType
 import com.revolut.billing.service.AccountService
-import com.revolut.billing.utils.apiDtoMapper
+import com.revolut.billing.utils.ApiObjectMapper
 import com.revolut.billing.utils.postMethod
 import mu.KLogging
 import spark.Request
@@ -43,7 +43,7 @@ class AccountsController @Inject constructor(
         val currency = req.params(CURRENCY_PLACEHOLDER)
 
         val account = getAccount(accountType, subjectId, currency)
-        return apiDtoMapper.writeValueAsString(account)
+        return ApiObjectMapper.get().writeValueAsString(account)
     }
 
     private fun getAccount(accountType: AccountType, subjectId: String, currency: String): Account {

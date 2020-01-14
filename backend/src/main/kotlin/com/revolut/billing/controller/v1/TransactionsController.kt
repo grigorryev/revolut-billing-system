@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.revolut.billing.api.v1.dto.transaction.Transaction
 import com.revolut.billing.service.TransactionService
-import com.revolut.billing.utils.apiDtoMapper
+import com.revolut.billing.utils.ApiObjectMapper
 import spark.Request
 import spark.Response
 import spark.Spark.get
@@ -25,7 +25,7 @@ class TransactionsController @Inject constructor(
     private fun getTransactionsByOperationId(req: Request, res: Response): String {
         val operationId = UUID.fromString(req.params(OPERATION_ID_PLACEHOLDER))
         val transactions = getTransactionsByOperationId(operationId)
-        return apiDtoMapper.writeValueAsString(transactions)
+        return ApiObjectMapper.get().writeValueAsString(transactions)
     }
 
     private fun getTransactionsByOperationId(operationId: UUID): List<Transaction> {
