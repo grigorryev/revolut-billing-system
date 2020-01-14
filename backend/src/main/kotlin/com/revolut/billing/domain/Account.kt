@@ -6,7 +6,7 @@ import java.math.BigDecimal
 import com.revolut.billing.api.v1.dto.accounts.Account as AccountDto
 
 class Account(
-    val id: Long,
+    val id: Long = 0,
     val accountId: AccountId,
     val amount: BigDecimal
 ) {
@@ -26,7 +26,7 @@ class Account(
     fun increasedBy(delta: BigDecimal) = Account(
         id = this.id,
         accountId = this.accountId,
-        amount = this.amount.minus(delta)
+        amount = this.amount.plus(delta)
     )
 
     companion object {

@@ -3,6 +3,8 @@ package com.revolut.billing.accounts
 import com.revolut.billing.api.v1.dto.accounts.AccountType
 import com.revolut.billing.api.v1.dto.accounts.CreateAccountRequest
 import com.revolut.billing.utils.httpStatus
+import com.revolut.billing.utils.shouldThrowBadRequest
+import com.revolut.billing.utils.shouldThrowNotFound
 import feign.FeignException
 import org.amshove.kluent.shouldThrow
 import org.amshove.kluent.with

@@ -6,6 +6,7 @@ import com.revolut.billing.api.v1.dto.transaction.OperationType
 import com.revolut.billing.api.v1.dto.transaction.Transaction
 import com.revolut.billing.api.v1.dto.transfer.DepositRequest
 import com.revolut.billing.utils.httpStatus
+import com.revolut.billing.utils.shouldThrowBadRequest
 import feign.FeignException
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldThrow

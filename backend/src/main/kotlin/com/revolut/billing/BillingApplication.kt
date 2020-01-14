@@ -3,11 +3,9 @@ package com.revolut.billing
 import com.google.inject.Guice
 import com.google.inject.Inject
 import com.revolut.billing.controller.v1.SparkController
-import com.revolut.billing.exception.OperationAlreadyProcessedException
 import com.revolut.billing.exception.registerExceptionHandlers
 import com.revolut.billing.utils.DependencySet
 import org.flywaydb.core.Flyway
-import spark.Spark.exception
 import spark.kotlin.port
 
 

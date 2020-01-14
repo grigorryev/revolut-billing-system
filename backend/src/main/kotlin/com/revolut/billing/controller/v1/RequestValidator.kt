@@ -2,6 +2,7 @@ package com.revolut.billing.controller.v1
 
 import com.revolut.billing.api.v1.dto.accounts.CreateAccountRequest
 import com.revolut.billing.api.v1.dto.transfer.DepositRequest
+import com.revolut.billing.api.v1.dto.transfer.TransferRequest
 import com.revolut.billing.exception.ConstraintViolationException
 import java.math.BigDecimal
 
@@ -26,5 +27,12 @@ object RequestValidator {
     fun validateCurrency(currency: String) {
         if (currency.isEmpty()) throw ConstraintViolationException("currency", "should not be empty")
         if (currency.length > 3) throw ConstraintViolationException("currency", "should not be shorter than 3 chars")
+    }
+
+    fun validate(request: TransferRequest) {
+        if (request.subjectIdFrom.isEmpty()) throw ConstraintViolationException("subjectIdFrom", "should not be empty")
+        if (request.subjectIdTo.isEmpty()) throw ConstraintViolationException("subjectIdTo", "should not be empty")
+        validateCurrency(request.currency)
+        if (request.amount <= BigDecimal.ZERO) throw ConstraintViolationException("amount", "should be positive")
     }
 }

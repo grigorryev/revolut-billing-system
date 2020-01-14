@@ -7,14 +7,10 @@ import com.revolut.billing.api.v1.client.TransactionsClient
 import com.revolut.billing.api.v1.dto.accounts.Account
 import com.revolut.billing.api.v1.dto.accounts.AccountType
 import com.revolut.billing.startApplication
-import com.revolut.billing.utils.httpStatus
 import feign.Feign
-import feign.FeignException
 import feign.jackson.JacksonDecoder
 import feign.jackson.JacksonEncoder
 import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldThrow
-import org.amshove.kluent.with
 import org.junit.Before
 import java.math.BigDecimal
 import kotlin.random.Random
@@ -61,15 +57,7 @@ open class BaseIT {
             accountId.subjectId shouldEqual userId
             accountId.currency shouldEqual DEFAULT_CURRENCY
             accountId.type shouldEqual type
-            amount shouldEqual amount
         }
-    }
-
-    protected fun shouldThrowBadRequest(action: () -> Any?) {
-        action shouldThrow FeignException::class with httpStatus(400)
-    }
-
-    protected fun shouldThrowNotFound(action: () -> Any?) {
-        action shouldThrow FeignException::class with httpStatus(404)
+        account.amount shouldEqual amount
     }
 }

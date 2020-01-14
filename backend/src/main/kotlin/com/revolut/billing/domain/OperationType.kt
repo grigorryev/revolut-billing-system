@@ -8,7 +8,7 @@ enum class OperationType {
     TRANSFER;
 
     fun toDto(): OperationTypeDto {
-        return when(this) {
+        return when (this) {
             DEPOSIT -> OperationTypeDto.DEPOSIT
             WITHDRAW -> OperationTypeDto.WITHDRAW
             TRANSFER -> OperationTypeDto.TRANSFER

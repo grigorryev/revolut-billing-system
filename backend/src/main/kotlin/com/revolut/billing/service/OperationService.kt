@@ -4,9 +4,12 @@ import com.google.common.util.concurrent.Striped
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.revolut.billing.DbClient
-import com.revolut.billing.api.v1.dto.transfer.DepositRequest
-import com.revolut.billing.api.v1.dto.transfer.OperationResponse
+import com.revolut.billing.converter.DepositOperationConverter
+import com.revolut.billing.converter.TransferOperationConverter
 import com.revolut.billing.domain.Transaction
+import com.revolut.billing.domain.operation.DepositOperation
+import com.revolut.billing.domain.operation.TransferOperation
+import com.revolut.billing.exception.InsufficientFundsException
 import com.revolut.billing.exception.OperationAlreadyProcessedException
 import com.revolut.billing.repository.TransactionRepository
 import org.jooq.DSLContext
@@ -19,23 +22,17 @@ class OperationService @Inject constructor(
     private val transactionRepository: TransactionRepository,
     private val db: DbClient
 ) {
-
     private val accountLocks = Striped.lock(64)
 
-    fun deposit(depositRequest: DepositRequest): OperationResponse {
-        val transactions = DepositProcessor.process(depositRequest)
-        process(depositRequest.operationId, transactions)
-
-        return OperationResponse(depositRequest.operationId)
+    fun deposit(operation: DepositOperation) {
+        val transactions = DepositOperationConverter.convert(operation)
+        process(operation.operationId, transactions)
     }
 
-//    fun withdraw(depositRequest: DepositRequest): OperationResponse {
-//
-//    }
-//
-//    fun transfer(depositRequest: DepositRequest): OperationResponse {
-//
-//    }
+    fun transfer(operation: TransferOperation) {
+        val transactions = TransferOperationConverter.convert(operation)
+        process(operation.operationId, transactions)
+    }
 
     private fun process(operationId: UUID, transactions: List<Transaction>) {
         throwIfAlreadyProcessed(operationId)
@@ -50,14 +47,11 @@ class OperationService @Inject constructor(
 
             throwIfAlreadyProcessed(operationId)
             performTransactions(transactions)
-
-
         } finally {
             accountsToLock.reversed().forEach { account ->
                 accountLocks.get(account).unlock()
             }
         }
-
     }
 
     private fun performTransactions(transactions: List<Transaction>) {
@@ -72,7 +66,7 @@ class OperationService @Inject constructor(
         val to = accountService.getOrCreateAccount(tx.accountIdTo, dbTransactionContext)
 
         if (!from.canBeNegative() && from.amount < tx.amount) {
-            throw IllegalStateException("not enough money")
+            throw InsufficientFundsException(tx.operationId)
         }
 
         transactionRepository.save(tx, dbTransactionContext)

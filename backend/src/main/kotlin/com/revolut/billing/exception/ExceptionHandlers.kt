@@ -17,4 +17,9 @@ fun registerExceptionHandlers() {
         res.status(404) // not found
         res.body("No account found")
     }
+
+    exception(InsufficientFundsException::class.java) { ex, req, res ->
+        res.status(403) // forbidden
+        res.body("Insufficient funds")
+    }
 }

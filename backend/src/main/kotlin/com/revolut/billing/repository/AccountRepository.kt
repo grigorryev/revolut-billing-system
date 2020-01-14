@@ -4,7 +4,6 @@ import com.revolut.billing.domain.Account
 import com.revolut.billing.domain.AccountId
 import db.tables.Account.ACCOUNT
 import org.jooq.DSLContext
-import org.jooq.Record
 import java.math.BigDecimal
 
 class AccountRepository {
