@@ -73,6 +73,11 @@
                     <execution>
                         <id>test-compile</id>
                         <phase>test-compile</phase>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
@@ -84,6 +89,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
