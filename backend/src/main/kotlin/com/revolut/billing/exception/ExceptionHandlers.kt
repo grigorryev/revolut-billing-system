@@ -9,7 +9,12 @@ fun registerExceptionHandlers() {
     }
 
     exception(ConstraintViolationException::class.java) { ex, req, res ->
-        res.status(404) // bad request
+        res.status(400) // bad request
         res.body("Constraint violation. ${ex.field}: ${ex.reason}")
+    }
+
+    exception(NoAccountFoundException::class.java) { ex, req, res ->
+        res.status(404) // not found
+        res.body("No account found")
     }
 }

@@ -1,6 +1,5 @@
 package com.revolut.billing.accounts
 
-import com.revolut.billing.api.v1.dto.accounts.Account
 import com.revolut.billing.api.v1.dto.accounts.AccountId
 import com.revolut.billing.api.v1.dto.accounts.AccountType
 import com.revolut.billing.api.v1.dto.transaction.OperationType
@@ -58,7 +57,7 @@ class DepositIT : BaseIT() {
         val action = { depositForUser(user, operationId) }
 
         // Assert (2nd deposit is rejected)
-        action shouldThrow FeignException::class with httpStatus(409)
+        action shouldThrow FeignException::class with httpStatus(409) // conflict
 
         // Assert (only one deposit was processed)
         val account = fetchAccountForUser(user)
@@ -66,7 +65,7 @@ class DepositIT : BaseIT() {
     }
 
     @Test
-    fun `empty userId causes http 404`() {
+    fun `empty userId causes http 400`() {
         // Arrange
         val request = DepositRequest(UUID.randomUUID(), "", DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, DEFAULT_CURRENCY)
 
@@ -74,11 +73,11 @@ class DepositIT : BaseIT() {
         val action = { operationsClient.deposit(request) }
 
         // Assert
-        action shouldThrow FeignException::class with httpStatus(404)
+        action shouldThrow FeignException::class with httpStatus(400)
     }
 
     @Test
-    fun `empty paymentSystem causes http 404`() {
+    fun `empty paymentSystem causes http 400`() {
         // Arrange
         val user = generateUser()
         val request = DepositRequest(UUID.randomUUID(), user, "", DEFAULT_DEPOSIT_AMOUNT, DEFAULT_CURRENCY)
@@ -87,11 +86,11 @@ class DepositIT : BaseIT() {
         val action = { operationsClient.deposit(request) }
 
         // Assert
-        action shouldThrow FeignException::class with httpStatus(404)
+        action shouldThrow FeignException::class with httpStatus(400)
     }
 
     @Test
-    fun `empty currency causes http 404`() {
+    fun `empty currency causes http 400`() {
         // Arrange
         val user = generateUser()
         val request = DepositRequest(UUID.randomUUID(), user, DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, "")
@@ -100,11 +99,11 @@ class DepositIT : BaseIT() {
         val action = { operationsClient.deposit(request) }
 
         // Assert
-        action shouldThrow FeignException::class with httpStatus(404)
+        action shouldThrow FeignException::class with httpStatus(400)
     }
 
     @Test
-    fun `invalid currency causes http 404`() {
+    fun `invalid currency causes http 400`() {
         // Arrange
         val user = generateUser()
         val request = DepositRequest(UUID.randomUUID(), user, DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, "USDUSD")
@@ -113,11 +112,11 @@ class DepositIT : BaseIT() {
         val action = { operationsClient.deposit(request) }
 
         // Assert
-        action shouldThrow FeignException::class with httpStatus(404)
+        action shouldThrow FeignException::class with httpStatus(400)
     }
 
     @Test
-    fun `negative amount causes http 404`() {
+    fun `negative amount causes http 400`() {
         // Arrange
         val user = generateUser()
         val request = DepositRequest(UUID.randomUUID(), user, DEFAULT_PAYMENT_SYSTEM, BigDecimal.valueOf(-1), DEFAULT_CURRENCY)
@@ -126,7 +125,7 @@ class DepositIT : BaseIT() {
         val action = { operationsClient.deposit(request) }
 
         // Assert
-        action shouldThrow FeignException::class with httpStatus(404)
+        action shouldThrow FeignException::class with httpStatus(400)
     }
 
     private fun depositForUser(userId: String, operationId: UUID = UUID.randomUUID()): UUID {

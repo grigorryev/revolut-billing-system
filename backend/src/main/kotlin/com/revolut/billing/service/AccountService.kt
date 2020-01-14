@@ -5,6 +5,7 @@ import com.google.inject.Singleton
 import com.revolut.billing.DbClient
 import com.revolut.billing.domain.Account
 import com.revolut.billing.domain.AccountId
+import com.revolut.billing.exception.NoAccountFoundException
 import com.revolut.billing.repository.AccountRepository
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
@@ -16,7 +17,7 @@ class AccountService @Inject constructor(
 ) {
     fun getAccount(accountId: AccountId): Account {
         return accountRepository.findByAccountId(accountId, db.ctx())
-            ?: throw IllegalStateException("No account found")
+            ?: throw NoAccountFoundException()
     }
 
     fun getOrCreateAccount(accountId: AccountId) = getOrCreateAccount(accountId, db.ctx())
