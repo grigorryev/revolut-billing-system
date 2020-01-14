@@ -26,7 +26,7 @@ class AccountsIT : BaseIT() {
     }
 
     @Test
-    fun `request for nonexistent account causes 404`() {
+    fun `request for nonexistent account causes http_404 (not_found)`() {
         // Act
         val action = { fetchAccountForUser("no_such_user") }
 
@@ -34,5 +34,15 @@ class AccountsIT : BaseIT() {
         action shouldThrow FeignException::class with httpStatus(404)
     }
 
-    // todo: argument validation tests
+    @Test
+    fun `invalid requests cause http_4** (bad_request or not_found)`() {
+        val user = generateUser()
+
+        shouldThrowBadRequest { accountsClient.createAccount(CreateAccountRequest(AccountType.MAIN_USER_ACCOUNT, "", DEFAULT_CURRENCY)) }
+        shouldThrowBadRequest { accountsClient.createAccount(CreateAccountRequest(AccountType.MAIN_USER_ACCOUNT, user, "")) }
+        shouldThrowBadRequest { accountsClient.createAccount(CreateAccountRequest(AccountType.MAIN_USER_ACCOUNT, user, "USDUSD")) }
+        shouldThrowBadRequest { accountsClient.getAccount(AccountType.MAIN_USER_ACCOUNT, user, "USDUSD") }
+        shouldThrowNotFound { accountsClient.getAccount(AccountType.MAIN_USER_ACCOUNT, "", DEFAULT_CURRENCY) }
+        shouldThrowNotFound { accountsClient.getAccount(AccountType.MAIN_USER_ACCOUNT, user, "") }
+    }
 }

@@ -65,67 +65,17 @@ class DepositIT : BaseIT() {
     }
 
     @Test
-    fun `empty userId causes http 400`() {
-        // Arrange
-        val request = DepositRequest(UUID.randomUUID(), "", DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, DEFAULT_CURRENCY)
-
-        // Act
-        val action = { operationsClient.deposit(request) }
-
-        // Assert
-        action shouldThrow FeignException::class with httpStatus(400)
-    }
-
-    @Test
-    fun `empty paymentSystem causes http 400`() {
-        // Arrange
+    fun `invalid requests cause http_400 (bad request)`() {
         val user = generateUser()
-        val request = DepositRequest(UUID.randomUUID(), user, "", DEFAULT_DEPOSIT_AMOUNT, DEFAULT_CURRENCY)
+        val operationId = UUID.randomUUID()
 
-        // Act
-        val action = { operationsClient.deposit(request) }
-
-        // Assert
-        action shouldThrow FeignException::class with httpStatus(400)
-    }
-
-    @Test
-    fun `empty currency causes http 400`() {
-        // Arrange
-        val user = generateUser()
-        val request = DepositRequest(UUID.randomUUID(), user, DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, "")
-
-        // Act
-        val action = { operationsClient.deposit(request) }
-
-        // Assert
-        action shouldThrow FeignException::class with httpStatus(400)
-    }
-
-    @Test
-    fun `invalid currency causes http 400`() {
-        // Arrange
-        val user = generateUser()
-        val request = DepositRequest(UUID.randomUUID(), user, DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, "USDUSD")
-
-        // Act
-        val action = { operationsClient.deposit(request) }
-
-        // Assert
-        action shouldThrow FeignException::class with httpStatus(400)
-    }
-
-    @Test
-    fun `negative amount causes http 400`() {
-        // Arrange
-        val user = generateUser()
-        val request = DepositRequest(UUID.randomUUID(), user, DEFAULT_PAYMENT_SYSTEM, BigDecimal.valueOf(-1), DEFAULT_CURRENCY)
-
-        // Act
-        val action = { operationsClient.deposit(request) }
-
-        // Assert
-        action shouldThrow FeignException::class with httpStatus(400)
+        shouldThrowBadRequest { operationsClient.deposit(DepositRequest(operationId, "", DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, DEFAULT_CURRENCY)) }
+        shouldThrowBadRequest { operationsClient.deposit(DepositRequest(operationId, user, "", DEFAULT_DEPOSIT_AMOUNT, DEFAULT_CURRENCY)) }
+        shouldThrowBadRequest { operationsClient.deposit(DepositRequest(operationId, user, DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, "")) }
+        shouldThrowBadRequest { operationsClient.deposit(DepositRequest(operationId, user, DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, "USDUSD")) }
+        shouldThrowBadRequest { operationsClient.deposit(DepositRequest(operationId, user, DEFAULT_PAYMENT_SYSTEM, BigDecimal.valueOf(-1), DEFAULT_CURRENCY)) }
+        shouldThrowBadRequest { operationsClient.deposit(DepositRequest(operationId, user, DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, "")) }
+        shouldThrowBadRequest { operationsClient.deposit(DepositRequest(operationId, user, DEFAULT_PAYMENT_SYSTEM, DEFAULT_DEPOSIT_AMOUNT, "")) }
     }
 
     private fun depositForUser(userId: String, operationId: UUID = UUID.randomUUID()): UUID {

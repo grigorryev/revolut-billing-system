@@ -32,6 +32,7 @@ class AccountsController @Inject constructor(
     }
 
     private fun addAccount(request: CreateAccountRequest): Account {
+        RequestValidator.validate(request)
         val accountId = AccountId(AccountType.fromDto(request.type), request.subjectId, request.currency)
         return accountService.getOrCreateAccount(accountId).toDto()
     }
@@ -46,6 +47,7 @@ class AccountsController @Inject constructor(
     }
 
     private fun getAccount(accountType: AccountType, subjectId: String, currency: String): Account {
+        RequestValidator.validateGetAccount(subjectId, currency)
         val accountId = AccountId(accountType, subjectId, currency)
         return accountService.getAccount(accountId).toDto()
     }
