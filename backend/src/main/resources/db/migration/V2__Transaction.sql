@@ -16,3 +16,5 @@ CREATE TABLE transaction (
 
   CONSTRAINT transaction_pkey PRIMARY KEY (id)
 );
+
+CREATE INDEX transaction_operation_id_idx ON transaction(operation_id);

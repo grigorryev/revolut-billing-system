@@ -11,3 +11,5 @@ CREATE TABLE account (
 
   CONSTRAINT account_pkey PRIMARY KEY (id)
 );
+
+CREATE INDEX account_account_id_idx ON account(subject_id, account_type, currency);
