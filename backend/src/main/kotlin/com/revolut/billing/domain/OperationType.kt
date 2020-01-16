@@ -4,13 +4,11 @@ import com.revolut.billing.api.v1.dto.transaction.OperationType as OperationType
 
 enum class OperationType {
     DEPOSIT,
-    WITHDRAW,
     TRANSFER;
 
     fun toDto(): OperationTypeDto {
         return when (this) {
             DEPOSIT -> OperationTypeDto.DEPOSIT
-            WITHDRAW -> OperationTypeDto.WITHDRAW
             TRANSFER -> OperationTypeDto.TRANSFER
         }
     }

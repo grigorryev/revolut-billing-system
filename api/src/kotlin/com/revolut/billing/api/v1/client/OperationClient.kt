@@ -9,9 +9,18 @@ const val DEPOSIT_URL = "api/v1/deposit"
 const val TRANSFER_URL = "api/v1/transfer"
 
 interface OperationClient {
+    /**
+     * Deposits money for specified account from payment system with `request.paymentSystemId`.
+     * Returns http_409 if operation with the same `request.operationId` was already processed.
+     */
     @RequestLine("POST $DEPOSIT_URL")
     fun deposit(request: DepositRequest): OperationResponse
 
+    /**
+     * Transfers money between accounts.
+     * Returns http_409 if operation with the same `request.operationId` was already processed.
+     * Returns http_403 in case of insufficient funds.
+     */
     @RequestLine("POST $TRANSFER_URL")
     fun transfer(request: TransferRequest): OperationResponse
 }

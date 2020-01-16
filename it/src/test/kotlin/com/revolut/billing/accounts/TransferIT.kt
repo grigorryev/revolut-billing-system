@@ -5,6 +5,7 @@ import com.revolut.billing.api.v1.dto.accounts.AccountType
 import com.revolut.billing.api.v1.dto.transaction.OperationType
 import com.revolut.billing.api.v1.dto.transfer.DepositRequest
 import com.revolut.billing.api.v1.dto.transfer.TransferRequest
+import com.revolut.billing.config.TransferConfig
 import com.revolut.billing.utils.httpStatus
 import com.revolut.billing.utils.shouldBeEquivalent
 import com.revolut.billing.utils.shouldThrowBadRequest
@@ -24,9 +25,8 @@ class TransferIT : BaseIT() {
         val userFrom = generateUser()
         val userTo = generateUser()
 
-        // expected result balance (123) + transfer size (100) + expected commission(2)
-        // todo: get transaction commission from config
-        depositForUser(userFrom, 123 + 100 + 2)
+        // expected result balance (123) + transfer size (100) + expected commission (2)
+        depositForUser(userFrom, 123 + 100 + expectedCommissionForTransferOf(100))
 
         // Act
         val operationId = transfer(userFrom, userTo, 100)
@@ -45,14 +45,14 @@ class TransferIT : BaseIT() {
         transferTx.accountIdFrom shouldEqual AccountId(AccountType.MAIN_USER_ACCOUNT, userFrom, DEFAULT_CURRENCY)
         transferTx.accountIdTo shouldEqual AccountId(AccountType.MAIN_USER_ACCOUNT, userTo, DEFAULT_CURRENCY)
 
-        commissionTx.amount shouldBeEquivalent 2
+        commissionTx.amount shouldBeEquivalent expectedCommissionForTransferOf(100)
         commissionTx.accountIdFrom shouldEqual AccountId(AccountType.MAIN_USER_ACCOUNT, userFrom, DEFAULT_CURRENCY)
         commissionTx.accountIdTo shouldEqual AccountId(AccountType.TRANSFER_COMMISSION, userFrom, DEFAULT_CURRENCY)
 
         // Assert (check accounts)
         validateAccountAmount(userFrom, 123)
         validateAccountAmount(userTo, 100)
-        validateCommission(userFrom, 2)
+        validateCommission(userFrom, expectedCommissionForTransferOf(100))
     }
 
     @Test
@@ -107,7 +107,7 @@ class TransferIT : BaseIT() {
     }
 
     @Test
-    fun `operation with cannot be processed twice`() {
+    fun `operation cannot be processed twice`() {
         // Arrange
         val userFrom = generateUser()
         val userTo = generateUser()
@@ -122,9 +122,9 @@ class TransferIT : BaseIT() {
         action shouldThrow FeignException::class with httpStatus(409) // conflict
 
         // Assert (only one transfer has been processed)
-        validateAccountAmount(userFrom, 1000 - 100 - 2)
+        validateAccountAmount(userFrom, 1000 - 100 - expectedCommissionForTransferOf(100))
         validateAccountAmount(userTo, 100)
-        validateCommission(userFrom, 2)
+        validateCommission(userFrom, expectedCommissionForTransferOf(100))
     }
 
     @Test
@@ -164,5 +164,9 @@ class TransferIT : BaseIT() {
     private fun validateAccountWasNotCreated(userId: String, type: AccountType = AccountType.MAIN_USER_ACCOUNT) {
         val action = { accountsClient.getAccount(AccountType.TRANSFER_COMMISSION, userId, DEFAULT_CURRENCY) }
         action shouldThrow FeignException::class with httpStatus(404) // not found
+    }
+
+    private fun expectedCommissionForTransferOf(amount: Long): Long {
+        return (BigDecimal.valueOf(amount) * TransferConfig.transferCommissionPercent).toLong()
     }
 }

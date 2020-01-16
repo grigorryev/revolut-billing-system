@@ -10,9 +10,15 @@ const val CREATE_ACCOUNT_URL = "api/v1/accounts/create"
 const val GET_ACCOUNT_URL_FEIGN = "api/v1/accounts/{accountType}/{subjectId}/{currency}"
 
 interface AccountsClient {
+    /**
+     * Creates new account with empty balance.
+     */
     @RequestLine("POST $CREATE_ACCOUNT_URL")
     fun createAccount(request: CreateAccountRequest): Account
 
+    /**
+     * Returns account, or http_404 if no account with specified parameters found.
+     */
     @RequestLine("GET $GET_ACCOUNT_URL_FEIGN")
     fun getAccount(@Param("accountType") accountType: AccountType, @Param("subjectId") subjectId: String, @Param("currency") currency: String): Account
 }

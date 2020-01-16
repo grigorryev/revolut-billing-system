@@ -20,6 +20,6 @@ fun registerExceptionHandlers() {
 
     exception(InsufficientFundsException::class.java) { ex, req, res ->
         res.status(403) // forbidden
-        res.body("Insufficient funds")
+        res.body("Insufficient funds for operation ${ex.operationId}")
     }
 }

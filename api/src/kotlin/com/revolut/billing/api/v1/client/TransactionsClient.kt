@@ -8,6 +8,9 @@ import java.util.UUID
 const val GET_TRANSACTIONS_BY_OPERATION_ID_FEIGN = "api/v1/operation/{operationId}/transactions"
 
 interface TransactionsClient {
+    /**
+     * Returns a list of all transactions processed for specified operation.
+     */
     @RequestLine("GET $GET_TRANSACTIONS_BY_OPERATION_ID_FEIGN")
     fun getTransactionsByOperationId(@Param("operationId") operationId: UUID): List<Transaction>
 }

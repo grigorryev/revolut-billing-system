@@ -1,15 +1,16 @@
 package com.revolut.billing.converter
 
+import com.revolut.billing.config.TransferConfig
 import com.revolut.billing.domain.AccountId
 import com.revolut.billing.domain.AccountType
 import com.revolut.billing.domain.OperationType
 import com.revolut.billing.domain.Transaction
 import com.revolut.billing.domain.operation.TransferOperation
-import java.math.BigDecimal
 
+/**
+ * Converts TransferOperation into the list of transactions.
+ */
 object TransferOperationConverter {
-    // todo: move to config
-    private val TRANSFER_COMISSION_PERCENT = BigDecimal.valueOf(0.02)
 
     fun convert(operation: TransferOperation): List<Transaction> {
         val transferTransaction = Transaction(
@@ -25,7 +26,7 @@ object TransferOperationConverter {
             operationType = OperationType.TRANSFER,
             accountIdFrom = operation.accountFrom,
             accountIdTo = AccountId(AccountType.TRANSFER_COMMISSION, operation.accountFrom.subjectId, operation.currency),
-            amount = operation.amount * TRANSFER_COMISSION_PERCENT
+            amount = operation.amount * TransferConfig.transferCommissionPercent
         )
 
         return listOf(transferTransaction, comissionTransaction)

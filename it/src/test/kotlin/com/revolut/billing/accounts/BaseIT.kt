@@ -35,7 +35,7 @@ open class BaseIT {
         isInitilized = true
     }
 
-    protected val objectMapper = jacksonObjectMapper()
+    private val objectMapper = jacksonObjectMapper()
 
     protected val accountsClient = build<AccountsClient>()
 

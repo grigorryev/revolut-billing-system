@@ -6,6 +6,9 @@ import com.revolut.billing.api.v1.dto.transfer.TransferRequest
 import com.revolut.billing.exception.ConstraintViolationException
 import java.math.BigDecimal
 
+/**
+ * Throws ConstraintViolationException if incoming data fails validation.
+ */
 object RequestValidator {
     fun validate(request: DepositRequest) {
         if (request.userId.isEmpty()) throw ConstraintViolationException("userId", "should not be empty")

@@ -4,6 +4,9 @@ import com.revolut.billing.domain.OperationType
 import com.revolut.billing.domain.Transaction
 import com.revolut.billing.domain.operation.DepositOperation
 
+/**
+ * Converts DepositOperation into the list of transactions.
+ */
 object DepositOperationConverter {
     fun convert(operation: DepositOperation): List<Transaction> {
         val depositTransaction = Transaction(

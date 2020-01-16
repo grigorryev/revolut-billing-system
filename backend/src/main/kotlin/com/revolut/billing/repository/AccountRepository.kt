@@ -1,11 +1,13 @@
 package com.revolut.billing.repository
 
+import com.google.inject.Singleton
 import com.revolut.billing.domain.Account
 import com.revolut.billing.domain.AccountId
 import db.tables.Account.ACCOUNT
 import org.jooq.DSLContext
 import java.math.BigDecimal
 
+@Singleton
 class AccountRepository {
     fun findByAccountId(accountId: AccountId, ctx: DSLContext): Account? {
         val record = ctx.select().from(ACCOUNT)

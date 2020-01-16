@@ -35,19 +35,26 @@ class OperationService @Inject constructor(
     }
 
     private fun process(operationId: UUID, transactions: List<Transaction>) {
+        // check if operation has been already processed
         throwIfAlreadyProcessed(operationId)
 
+        // get involved accounts in sorted order
         val accountsToLock = transactions.flatMap { listOf(it.accountIdFrom, it.accountIdTo) }
             .sorted()
 
         try {
+            // acquire the lock for each account
             accountsToLock.forEach { account ->
                 accountLocks.get(account).lock()
             }
 
+            // double check that operation hasn't been processed yet
             throwIfAlreadyProcessed(operationId)
+
+            // do the actual transfer
             performTransactions(transactions)
         } finally {
+            // release locks in reversed order to prevent deadlocks
             accountsToLock.reversed().forEach { account ->
                 accountLocks.get(account).unlock()
             }
@@ -55,6 +62,7 @@ class OperationService @Inject constructor(
     }
 
     private fun performTransactions(transactions: List<Transaction>) {
+        // process all transactions within a single database transaction
         db.ctx().transactionResult { conf ->
             val dbTransactionContext = DSL.using(conf)
             transactions.forEach { tx -> performTransaction(tx, dbTransactionContext) }
@@ -65,6 +73,7 @@ class OperationService @Inject constructor(
         val from = accountService.getOrCreateAccount(tx.accountIdFrom, dbTransactionContext)
         val to = accountService.getOrCreateAccount(tx.accountIdTo, dbTransactionContext)
 
+        // throw if account doesn't have enough money
         if (!from.canBeNegative() && from.amount < tx.amount) {
             throw InsufficientFundsException(tx.operationId)
         }

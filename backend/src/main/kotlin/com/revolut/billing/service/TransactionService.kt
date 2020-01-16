@@ -1,11 +1,13 @@
 package com.revolut.billing.service
 
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import com.revolut.billing.DbClient
 import com.revolut.billing.domain.Transaction
 import com.revolut.billing.repository.TransactionRepository
 import java.util.UUID
 
+@Singleton
 class TransactionService @Inject constructor(
     private val db: DbClient,
     private val transactionRepository: TransactionRepository

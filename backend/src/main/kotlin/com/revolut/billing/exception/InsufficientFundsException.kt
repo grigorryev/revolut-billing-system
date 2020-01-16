@@ -2,4 +2,4 @@ package com.revolut.billing.exception
 
 import java.util.UUID
 
-class InsufficientFundsException(operationId: UUID) : RuntimeException()
+class InsufficientFundsException(val operationId: UUID) : RuntimeException()

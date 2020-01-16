@@ -8,10 +8,9 @@ import com.revolut.billing.utils.DependencySet
 import org.flywaydb.core.Flyway
 import spark.kotlin.port
 
-
 class BillingApplication @Inject
 constructor(
-    val controllers: DependencySet<SparkController>
+    private val controllers: DependencySet<SparkController>
 ) {
     fun run() {
         port(8080)
@@ -25,7 +24,6 @@ fun startApplication(migrationsPath: String) {
     Guice.createInjector(MainModule())
         .getInstance(BillingApplication::class.java)
         .run()
-
 
     val flyway = Flyway.configure()
         .locations("filesystem:$migrationsPath")
