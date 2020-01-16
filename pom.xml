@@ -21,6 +21,10 @@
         <kotlin-logging.version>1.7.7</kotlin-logging.version>
         <feign.version>9.1.0</feign.version>
         <feign-jackson.version>10.7.0</feign-jackson.version>
+
+        <junit.version>4.12</junit.version>
+        <kluent.version>1.58</kluent.version>
+        <surefire.version>2.19.1</surefire.version>
     </properties>
 
     <modules>
